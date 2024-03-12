@@ -1,0 +1,34 @@
+<tickets>
+  <ticket>
+    <id>0</id>
+    <name>мяумяу</name>
+    <coordinates>
+      <x>12.0</x>
+      <y>45</y>
+    </coordinates>
+    <creationDate>23.02.2000 12:00</creationDate>
+    <price>33</price>
+    <refundable>false</refundable>
+    <tickettype>VIP</tickettype>
+    <person>
+      <birthday>23.02.2000 20:20</birthday>
+      <height>176.0</height>
+    </person>
+  </ticket>
+  <ticket>
+    <id>2</id>
+    <name>kate</name>
+    <coordinates>
+      <x>22.0</x>
+      <y>33</y>
+    </coordinates>
+    <creationDate>26.02.2024 12:00</creationDate>
+    <price>44</price>
+    <refundable>true</refundable>
+    <tickettype>VIP</tickettype>
+    <person>
+      <birthday>09.09.2001 00:00</birthday>
+      <height>33.0</height>
+    </person>
+  </ticket>
+</tickets>
