@@ -31,4 +31,20 @@
       <height>33.0</height>
     </person>
   </ticket>
+  <ticket>
+    <id>3</id>
+    <name>kds</name>
+    <coordinates>
+      <x>22.0</x>
+      <y>22</y>
+    </coordinates>
+    <creationDate>12.03.2024 12:00</creationDate>
+    <price>22</price>
+    <refundable>true</refundable>
+    <tickettype>VIP</tickettype>
+    <person>
+      <birthday>20.02.2000 00:00</birthday>
+      <height>122.0</height>
+    </person>
+  </ticket>
 </tickets>

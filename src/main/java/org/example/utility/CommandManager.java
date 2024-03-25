@@ -14,7 +14,7 @@ public class CommandManager {
     /**
      * Словарь используемых команд
      */
-    static HashMap<String,? super Command> commands = new HashMap<>();
+    static Map<String,? super Command> commands = new LinkedHashMap<>();
 
     /**
      * История последних пользовательских команд
@@ -41,7 +41,7 @@ public class CommandManager {
      * Возвращает словарь доступных команд
      * @return словарь доступных команд
      */
-    public static HashMap<String, ? super Command> getCommands(){
+    public static Map<String, ? super Command> getCommands(){
         return commands;
     }
 
