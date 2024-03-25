@@ -1,0 +1,66 @@
+@options
+@packages
+-classpath
+'/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.10.0/jackson-dataformat-xml-2.10.0.jar:/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.10.0/jackson-core-2.10.0.jar:/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.10.0/jackson-annotations-2.10.0.jar:/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.10.0/jackson-databind-2.10.0.jar:/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.10.0/jackson-module-jaxb-annotations-2.10.0.jar:/Users/sergejpimenov/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/2.3.2/jakarta.xml.bind-api-2.3.2.jar:/Users/sergejpimenov/.m2/repository/jakarta/activation/jakarta.activation-api/1.2.1/jakarta.activation-api-1.2.1.jar:/Users/sergejpimenov/.m2/repository/org/codehaus/woodstox/stax2-api/4.2/stax2-api-4.2.jar:/Users/sergejpimenov/.m2/repository/com/fasterxml/woodstox/woodstox-core/6.0.1/woodstox-core-6.0.1.jar:/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.10.0/jackson-datatype-jsr310-2.10.0.jar'
+-encoding
+'UTF-8'
+-private
+-source
+'1.8'
+-sourcepath
+'/Users/sergejpimenov/IdeaProjects/Lab5/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2024. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Lab5 1.0-SNAPSHOT API'
+-linkoffline
+'https://docs.oracle.com/javase/8/docs/api' '/Users/sergejpimenov/IdeaProjects/Lab5/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'Lab5 1.0-SNAPSHOT API'
+org.example.models
+org.example.exceptions
+org.example.exceptions.wrongRangeExceptions
+org.example
+org.example.commands
+org.example.utility
+org.example.utility.ModelsAskers
+/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.10.0/jackson-dataformat-xml-2.10.0.jar = 1708698256082
+/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.10.0/jackson-core-2.10.0.jar = 1708698256189
+/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.10.0/jackson-annotations-2.10.0.jar = 1708698256067
+/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.10.0/jackson-databind-2.10.0.jar = 1708698256156
+/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.10.0/jackson-module-jaxb-annotations-2.10.0.jar = 1708698255885
+/Users/sergejpimenov/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/2.3.2/jakarta.xml.bind-api-2.3.2.jar = 1708698256126
+/Users/sergejpimenov/.m2/repository/jakarta/activation/jakarta.activation-api/1.2.1/jakarta.activation-api-1.2.1.jar = 1708698256147
+/Users/sergejpimenov/.m2/repository/org/codehaus/woodstox/stax2-api/4.2/stax2-api-4.2.jar = 1708698256135
+/Users/sergejpimenov/.m2/repository/com/fasterxml/woodstox/woodstox-core/6.0.1/woodstox-core-6.0.1.jar = 1708698257134
+/Users/sergejpimenov/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.10.0/jackson-datatype-jsr310-2.10.0.jar = 1708706042162
+/Users/sergejpimenov/IdeaProjects/Lab5/src/main/java = 1708695311360
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/tag-search-index.js = 1711373904838
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/overview-tree.html = 1711373904825
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/module-search-index.js = 1711373904838
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/index.html = 1711373904826
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/package-search-index.js = 1711373904838
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/serialized-form.html = 1711373904787
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/index-all.html = 1711373904852
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/allpackages-index.html = 1711373904837
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/member-search-index.js = 1711373904838
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/copy.svg = 1711373904860
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/script.js = 1711373904860
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/stylesheet.css = 1711373904859
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/search-page.js = 1711373904861
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/overview-summary.html = 1711373904853
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/help-doc.html = 1711373904857
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/element-list = 1711373904768
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/search.html = 1711373904853
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/allclasses-index.html = 1711373904837
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/type-search-index.js = 1711373904838
+/Users/sergejpimenov/IdeaProjects/Lab5/target/site/apidocs/search.js = 1711373904861
