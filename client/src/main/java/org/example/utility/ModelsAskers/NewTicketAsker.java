@@ -1,12 +1,11 @@
 package org.example.utility.ModelsAskers;
 
+import org.example.exceptions.NoSuchTicketTypeException;
+import org.example.exceptions.WrongFieldTypeException;
+import org.example.exceptions.wrongRangeExceptions.WrongPriceRangeException;
+import org.example.exceptions.wrongRangeExceptions.WrongXCoordRangeException;
+import org.example.exceptions.wrongRangeExceptions.WrongYCoordRangeException;
 import org.example.utility.Console;
-import org.server.exceptions.NoSuchElementException;
-import org.server.exceptions.NoSuchTicketTypeException;
-import org.server.exceptions.WrongFieldTypeException;
-import org.server.exceptions.wrongRangeExceptions.WrongPriceRangeException;
-import org.server.exceptions.wrongRangeExceptions.WrongXCoordRangeException;
-import org.server.exceptions.wrongRangeExceptions.WrongYCoordRangeException;
 
 import org.example.models.Ticket;
 import org.example.models.TicketType;

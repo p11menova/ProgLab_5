@@ -1,7 +1,7 @@
 package org.example;
 
 
-import org.server.exceptions.WrongAmountOfArgumentsException;
+import org.example.exceptions.WrongAmountOfArgumentsException;
 
 import org.example.utility.*;
 

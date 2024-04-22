@@ -3,20 +3,12 @@ package org.example.utility;
 import org.example.interaction.Request;
 import org.example.interaction.Response;
 import org.example.interaction.ResponseStatus;
-import org.example.models.Coordinates;
-import org.example.models.Person;
-import org.example.models.Ticket;
-import org.example.models.TicketType;
-import org.server.exceptions.NoSuchElementException;
-import org.server.exceptions.WrongFileRightException;
+import org.example.exceptions.WrongFileRightException;
 
 import java.io.*;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class Client {
     private static final int MAX_RECONNECTION_ATTEMPTS = 5;
@@ -88,6 +80,11 @@ public class Client {
                         disconnectToServer();
                         System.exit(1);
                     }
+                }
+                if (response.getResponseStatus() == ResponseStatus.STOP_SCRIPT){
+                    console.print_error(response.getResponseBody());
+                    console.println("ОБРАБОТКА СКРИПТА БУДЕТ ЗАВЕРШЕНА");
+                    console.denyFileMode();
                 }
                 if (response.getResponseStatus() == ResponseStatus.OBJECT) {
                     serverWriter.writeObject(console.makeNewTicket(Integer.parseInt(request.getCommandStringArg().trim())));

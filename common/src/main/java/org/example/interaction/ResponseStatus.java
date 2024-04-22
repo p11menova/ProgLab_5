@@ -5,6 +5,7 @@ public enum ResponseStatus {
     ERROR,
     OBJECT,
     SCRIPT,
+    STOP_SCRIPT,
     EXIT;
 
 }

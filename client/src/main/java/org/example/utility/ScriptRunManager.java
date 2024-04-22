@@ -1,7 +1,8 @@
 package org.example.utility;
 
-import org.server.exceptions.NoSuchElementException;
-import org.server.exceptions.WrongFileRightException;
+
+import org.example.exceptions.NoSuchElementException;
+import org.example.exceptions.WrongFileRightException;
 
 import java.io.File;
 import java.io.FileNotFoundException;

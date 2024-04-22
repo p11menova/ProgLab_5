@@ -160,7 +160,6 @@ public class NewTicketValidator {
     public boolean validateTicket(CollectionManager collectionManager, Ticket ticket) {
         AtomicBoolean is_okay = new AtomicBoolean(false);
         if (collectionManager.isIdTaken(ticket.get_id())) {
-           // Console.print_error("айди " + ticket.get_id() + " уже занят( будет добавлен первый экземпляр.");
             return false;
         }
         NewPersonValidator personValidator = new NewPersonValidator();

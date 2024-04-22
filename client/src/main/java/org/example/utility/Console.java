@@ -2,11 +2,11 @@ package org.example.utility;
 
 import org.example.models.Ticket;
 import org.example.utility.ModelsAskers.NewTicketAsker;
-import org.server.exceptions.NoSuchElementException;
+import org.example.exceptions.NoSuchElementException;
 import org.example.interaction.Request;
 
-import org.server.exceptions.WrongFileRightException;
-import org.server.utility.ModelsValidators.NewTicketValidator;
+import org.example.exceptions.WrongFileRightException;
+
 
 import java.io.FileNotFoundException;
 import java.util.EmptyStackException;
