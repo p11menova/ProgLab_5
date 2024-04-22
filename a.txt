@@ -1,2 +1,18 @@
-some text
-mdffsdfsf
+show
+show
+help
+insert 1
+name
+1
+1
+1
+true
+vip
+12
+2000 09 09
+inset
+insert 3
+ff
+1
+1
+r
