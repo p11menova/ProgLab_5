@@ -1,0 +1,7 @@
+org.example
+org.example.commands
+org.example.exceptions
+org.example.exceptions.wrongRangeExceptions
+org.example.models
+org.example.utility
+org.example.utility.ModelsAskers
