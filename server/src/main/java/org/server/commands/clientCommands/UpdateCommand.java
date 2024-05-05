@@ -21,11 +21,13 @@ public class UpdateCommand extends AbstractAddCommand {
         try {
             if (arg.isEmpty()) throw new WrongAmountOfArgumentsException();
             int id = Integer.parseInt(arg.trim());
-            if (this.collectionManager.isIdTaken(id)) throw new NoSuchElementException();
+            if (!this.collectionManager.isIdTaken(id)) throw new NoSuchElementException();
             this.idToBeUpdated = id;
-            return new Response(ResponseStatus.OBJECT, ">создание нового экземпляра Ticket:");
-        } catch (WrongAmountOfArgumentsException | NoSuchElementException e) {
+            return new Response(ResponseStatus.OBJECT, ">обновление экземпляра Ticket:");
+        } catch (WrongAmountOfArgumentsException e) {
             return new Response(ResponseStatus.ERROR, e.getMessage());
+        } catch ( NoSuchElementException e){
+            return new Response(ResponseStatus.STOP_SCRIPT, e.getMessage());
         }
     }
     @Override

@@ -26,7 +26,9 @@ public class InsertCommand extends AbstractAddCommand {
             int id = Integer.parseInt(arg.trim());
             if (this.collectionManager.isIdTaken(id)) throw new CollectionIdIsTakenException();
             return new Response(ResponseStatus.OBJECT, ">создание нового экземпляра Ticket:");
-        } catch (WrongAmountOfArgumentsException | CollectionIdIsTakenException | NumberFormatException e) {
+        } catch (WrongAmountOfArgumentsException e) {
+            return new Response(ResponseStatus.ERROR, e.getMessage());
+        } catch (CollectionIdIsTakenException | NumberFormatException e){
             return new Response(ResponseStatus.STOP_SCRIPT, e.getMessage());
         }
     }

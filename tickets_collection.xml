@@ -1,18 +1,50 @@
 <tickets>
   <ticket>
-    <id>0</id>
-    <name>name</name>
+    <id>1</id>
+    <name>3</name>
     <coordinates>
-      <x>11.0</x>
-      <y>11</y>
+      <x>3.0</x>
+      <y>3</y>
     </coordinates>
-    <creationDate>22.04.2024 06:03</creationDate>
-    <price>11</price>
+    <creationDate>05.05.2024 03:43</creationDate>
+    <price>3</price>
     <refundable>true</refundable>
-    <tickettype>USUAL</tickettype>
+    <tickettype>CHEAP</tickettype>
     <person>
-      <birthday>02.02.2000 00:00</birthday>
+      <birthday>09.09.4009 00:00</birthday>
+      <height>3.0</height>
+    </person>
+  </ticket>
+  <ticket>
+    <id>2</id>
+    <name>kayt</name>
+    <coordinates>
+      <x>3.0</x>
+      <y>3</y>
+    </coordinates>
+    <creationDate>05.05.2024 12:00</creationDate>
+    <price>3</price>
+    <refundable>true</refundable>
+    <tickettype>CHEAP</tickettype>
+    <person>
+      <birthday>09.09.2001 00:00</birthday>
       <height>11.0</height>
+    </person>
+  </ticket>
+  <ticket>
+    <id>3</id>
+    <name>3</name>
+    <coordinates>
+      <x>3.0</x>
+      <y>3</y>
+    </coordinates>
+    <creationDate>05.05.2024 03:42</creationDate>
+    <price>3</price>
+    <refundable>true</refundable>
+    <tickettype>CHEAP</tickettype>
+    <person>
+      <birthday>09.09.2008 00:00</birthday>
+      <height>3.0</height>
     </person>
   </ticket>
 </tickets>

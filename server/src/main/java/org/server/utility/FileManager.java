@@ -32,7 +32,6 @@ public class FileManager {
     public String filename;
     public String DEFAULT_FILENAME = "tickets_collection.xml";
 
-
     /**
      * Конструктор FileManager'a
      *
@@ -57,7 +56,6 @@ public class FileManager {
             File file = new File(this.filename);
             if (!file.canRead()) {
                 App.logger.severe("файл не имеет прав на чтение(. коллекция не может быть прочитана");
-//                Console.println("файл не имеет прав на чтение(");
                 return "";
             }
             FileReader reader = new FileReader(this.filename);
@@ -82,13 +80,14 @@ public class FileManager {
      */
     public void addDataToCollection(CollectionManager collectionManager) {
         try {
-            if (filename == null || filename.isBlank()) return;
+            if (filename == null || filename.isBlank()){
+                App.logger.warning("переменная окружения с названием файла не задана.\nколлекция не заполнится данными из файла(");
+                return;
+            }
             XmlMapper xmlMapper = new XmlMapper();
             xmlMapper.registerModule(new JavaTimeModule());
             SimpleModule module = new SimpleModule();
-
-            LocalDateTimeDeserializer localDateTimeDeserializer = new
-                    LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
 
             module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
             module.addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer());
@@ -96,7 +95,6 @@ public class FileManager {
 
             String readContent = this.readFileText().trim().replaceFirst("\uFFFD", "");
             Tickets data = xmlMapper.readValue(readContent, Tickets.class);
-
             if (data.addToCollectionIfOkay(collectionManager))
                 App.logger.info("тооп! валидные билеты из файла " + new File(filename).getName() + " добавлены в коллекцию!");
             else App.logger.info("все билеты в файле оказались не валидны и не добавлены в коллекцию(");
@@ -109,10 +107,6 @@ public class FileManager {
         }
 
     }
-
-    ;
-
-
     /**
      * Записывает коллекцию в файл
      *
@@ -126,10 +120,11 @@ public class FileManager {
         xmlMapper.registerModule(new JavaTimeModule());
         xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        xmlMapper.setDateFormat(new SimpleDateFormat("dd.MM.yyyy HH:mm"));
+       // xmlMapper.setDateFormat(new SimpleDateFormat("dd.MM.yyyy HH:mm"));
 
         Hashtable<Integer, Ticket> ht = collectionManager.getTicketsCollection();
         Tickets tickets = new Tickets();
+        System.out.println(tickets);
         ht.forEach((k, v) -> tickets.addToList(v));
 
         try {

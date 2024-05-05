@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,5 +22,6 @@ public class ZonedDateTimeDeserializer extends JsonDeserializer<ZonedDateTime> i
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDate localDate = LocalDate.parse(p.getText(), dateTimeFormatter);
         return localDate.atStartOfDay(ZoneOffset.UTC);
+        //return localDate.atStartOfDay().atZone(ZoneId.of("UTC"));
     }
 }

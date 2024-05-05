@@ -17,30 +17,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class NewTicketValidator {
     /**
-     * Новый экземпляр Ticket
-     */
-    private final Ticket ticket;
-
-    /**
-     * Конструктор
-     */
-    public NewTicketValidator() {
-        this.ticket = new Ticket();
-        this.ticket.set_coordinates(new Coordinates());
-    }
-
-    /**
      * Валидация имени экземпляра Ticket
      *
      * @param name имя
      * @return true, если имя корректно, иначе false
      */
     public boolean validateName(String name) {
-        if (name == null || name.isEmpty()) {
+        if (name == null || name.isEmpty())
             return false;
-        }
-        ;
-        this.ticket.set_name(name);
         return true;
     }
 
@@ -59,7 +43,7 @@ public class NewTicketValidator {
             double i = Double.parseDouble(XCoord.trim());
             if (Coordinates.xMin >= i) throw new WrongXCoordRangeException();
 
-            this.ticket.get_coodinates().set_coordX(i);
+  //          this.ticket.get_coodinates().set_coordX(i);
             return true;
         } catch (NumberFormatException | WrongXCoordRangeException e) {
             return false;
@@ -83,7 +67,7 @@ public class NewTicketValidator {
             int i = Integer.parseInt(YCoord.trim());
             if (Coordinates.yMax <= i) throw new WrongYCoordRangeException();
 
-            this.ticket.get_coodinates().set_coordY(i);
+    //        this.ticket.get_coodinates().set_coordY(i);
             return true;
         } catch (NumberFormatException | WrongYCoordRangeException e) {
             return false;
@@ -99,56 +83,18 @@ public class NewTicketValidator {
     public boolean validatePrice(String price) {
         try {
             if (price.isEmpty()) {
-                this.ticket.set_price(null);
+         //       this.ticket.set_price(null);
                 return true;
             }
             long i = Long.parseLong(price.trim());
             if (i <= 0) throw new WrongPriceRangeException();
 
-            this.ticket.set_price(i);
+//            this.ticket.set_price(i);
             return true;
         } catch (NumberFormatException | WrongPriceRangeException e) {
             return false;}
     }
 
-    /**
-     * Валидация поля "возвратен ли билет" экземпляра Ticket
-     *
-     * @param ref поле "возвратен ли билет"
-     * @return true, если поле "возвратен ли билет" корректно, иначе false
-     */
-    public boolean validateRefundable(String ref) {
-        try {
-            if (!(ref.equalsIgnoreCase("true") || ref.equalsIgnoreCase("false")))
-                throw new WrongFieldTypeException();
-            this.ticket.set_refundable(Boolean.parseBoolean(ref));
-            return true;
-        } catch (WrongFieldTypeException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Валидация Типа экземпляра Ticket.
-     *
-     * @param ttype тип билета
-     * @return true, если тип билета корректен, иначе false
-     */
-    public boolean validateTicketType(String ttype) {
-        if (ttype.isEmpty()) {
-            return false;
-        }
-        try {
-            if (!(TicketType.getNamesArray().contains(ttype.toUpperCase())))
-                throw new NoSuchTicketTypeException();
-
-            this.ticket.set_type(TicketType.valueOf(ttype.toUpperCase()));
-            return true;
-
-        } catch (NoSuchTicketTypeException e) {
-
-        return false;}
-    }
 
     /**
      * Валидация экземпляра Ticket. (Ввод данных из файла .xml)

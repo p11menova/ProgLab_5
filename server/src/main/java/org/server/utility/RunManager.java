@@ -14,6 +14,7 @@ public class RunManager {
     static FileManager fileManager;
 
     public void prepare() {
+
         String path = System.getenv("FILE_PATH");
 //        if (path == null || path.isBlank()){
 //            Console.print_error("нет переменной окружения. установите значение FILE_PATH командой\nexport FILE_PATH=<file_path>.\nзавершение работы программы(");

@@ -81,7 +81,7 @@ public class Client {
                         System.exit(1);
                     }
                 }
-                if (response.getResponseStatus() == ResponseStatus.STOP_SCRIPT){
+                if (response.getResponseStatus() == ResponseStatus.STOP_SCRIPT && console.consoleMode == ConsoleMode.SCRIPT){
                     console.print_error(response.getResponseBody());
                     console.println("ОБРАБОТКА СКРИПТА БУДЕТ ЗАВЕРШЕНА");
                     console.denyFileMode();

@@ -36,10 +36,10 @@ public class ReplaceIfLowerCommand extends AbstractAddCommand {
             if (!this.collectionManager.isIdTaken(id)) throw new NoSuchElementException();
             this.idToBeReplaced = id;
             return new Response(ResponseStatus.OBJECT, ">создание нового экземпляра Ticket, на который хотите заменить:");
-        } catch (WrongAmountOfArgumentsException | NoSuchElementException e) {
+        } catch (WrongAmountOfArgumentsException e) {
             return new Response(ResponseStatus.ERROR, e.getMessage());
-        } catch (NumberFormatException e) {
-            return new Response(ResponseStatus.ERROR, "ключ элемента должен быть целым числом(");
+        } catch (NumberFormatException | NoSuchElementException e) {
+            return new Response(ResponseStatus.STOP_SCRIPT, "ключ элемента должен быть целым числом(");
         }
     }
 }
