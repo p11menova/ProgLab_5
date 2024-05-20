@@ -37,11 +37,11 @@ public class DBManager {
     public void connectToDB() throws SQLException{
 
         Properties auth = new Properties();
-        String DB_URL = "jdbc:postgresql://localhost:5432/studs";
-        auth.put("user", "ektrntrpim");
-        auth.put("password", "yui890");
+       // String DB_URL = "jdbc:postgresql://localhost:5432/studs";
+        auth.put("user", login);
+        auth.put("password", password);
 
-        this.connection = DriverManager.getConnection(DB_URL, auth);
+        this.connection = DriverManager.getConnection(host, auth);
         System.out.println("successfully connected to DB");
 
         this.st = connection.createStatement();
