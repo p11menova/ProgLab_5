@@ -19,7 +19,9 @@ public class RegisterUserCommand extends AuthorizationCommand {
     public Response execute(UserData userData) {
         if (!Users.register(userData)) return new Response(UserAuthStatus.ALREADY_EXISTS, "пользователь с логином: " + userData.login +" уже существует(" );
         try {
+            System.out.println("inserting into users");
             this.dbManager.insertIntoUsers(userData);
+            System.out.println("successfully inserted into users");
         } catch (SQLException e) {
             return new Response(UserAuthStatus.ERROR, "не удалось добавить юзера в БД");
         }

@@ -52,12 +52,8 @@ public class DBManager {
 
     }
     public void createTables() throws SQLException {
-
-
         st.execute(DBCommands.createTableUsers());
         System.out.println("successfully created table Users");
-        st.execute(DBCommands.createTicketTypeEnum());
-        System.out.println("made tickettype enum");
         st.execute(DBCommands.createTableTickets());
         System.out.println("successfully created table Tickets");
 
@@ -91,14 +87,11 @@ public class DBManager {
     }
     public void insertIntoUsers(UserData userData) throws SQLException {
         st.execute(DBCommands.insertIntoUsers(userData));
-
     }
     public void insertIntoTickets(TicketWithMetadata ticket) throws SQLException{
-        System.out.println("я добавляю в бд");
         ResultSet rs = st.executeQuery(DBCommands.getUserIDByLogin(ticket.userData.login));
         if (rs.next()){
             String user_id = rs.getString("id");
-            System.out.println("его айд " +user_id);
             st.execute(DBCommands.insertIntoTickets(ticket, user_id));
 
         }

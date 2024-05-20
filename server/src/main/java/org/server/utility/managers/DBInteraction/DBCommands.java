@@ -13,20 +13,17 @@ public class DBCommands {
                 "hashed_password TEXT NOT NULL," +
                 "salt TEXT NOT NULL);";
     }
-    public static String createTicketTypeEnum(){
-        return "DROP TYPE TicketType; CREATE TYPE TicketType AS ENUM('VIP', 'CHEAP', 'USUAL', 'BUDGETARY');";
-    }
 
     public static String createTableTickets() {
         return "CREATE TABLE IF NOT EXISTS Tickets (" +
-                "id INTEGER UNIQUE PRIMARY KEY," +
+                "id INTEGER PRIMARY KEY," +
                 "user_id INTEGER NOT NULL REFERENCES Users(id) ," +
                 "name TEXT NOT NULL," +
                 "coordinates POINT NOT NULL," +
                 "creation_date TIMESTAMP," +
                 "price BIGINT," +
                 "is_refundable BOOLEAN," +
-                "type TicketType NOT NULL," +
+                "type TEXT NOT NULL," +
                 "person_height FLOAT," +
                 "person_birthday TIMESTAMP);";
     }
@@ -43,7 +40,7 @@ public class DBCommands {
                 ticketWithMetadata.ticket.get_creationDate().toLocalDateTime().format(formatter),
                 ticketWithMetadata.ticket.get_price(),
                 ticketWithMetadata.ticket.get_refundable(),
-                ticketWithMetadata.ticket.get_ticketType(),
+                ticketWithMetadata.ticket.get_ticketType().name(),
                 ticketWithMetadata.ticket.get_person().height,
                 ticketWithMetadata.ticket.get_person().birthday.format(formatter));
 
@@ -73,7 +70,7 @@ public class DBCommands {
                 ticketWithMetadata.ticket.get_creationDate().toLocalDateTime().format(formatter),
                 ticketWithMetadata.ticket.get_price(),
                 ticketWithMetadata.ticket.get_refundable(),
-                ticketWithMetadata.ticket.get_ticketType(),
+                ticketWithMetadata.ticket.get_ticketType().name(),
                 ticketWithMetadata.ticket.get_person().height,
                 ticketWithMetadata.ticket.get_person().birthday.format(formatter),
                 ticketWithMetadata.ticket.get_id());
