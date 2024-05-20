@@ -1,5 +1,6 @@
 package org.server.commands.clientCommands;
 
+import org.example.interaction.Request;
 import org.server.exceptions.WrongFileRightException;
 import org.example.interaction.Response;
 import org.example.interaction.ResponseStatus;
@@ -10,15 +11,16 @@ import java.io.FileNotFoundException;
 /**
  * Команда исполнения скрипта
  */
-public class ExecuteScriptCommand extends Command {
+public class ExecuteScriptCommand extends UserCommand {
     public ExecuteScriptCommand() {
         super("execute_script file_name", "считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме.");
 
     }
 
     @Override
-    public Response execute(String arg) {
+    public Response execute(Request request) {
         try {
+            String arg = request.getCommandStringArg();
             File file = new File(arg.trim());
             if (!file.exists()) throw new FileNotFoundException();
             if (!(file.canRead())){

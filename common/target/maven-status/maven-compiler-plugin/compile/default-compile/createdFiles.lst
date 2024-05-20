@@ -1,9 +1,14 @@
 org/example/models/Coordinates.class
+org/example/interaction/PasswordHasher.class
 org/example/interaction/Request.class
 org/example/utility/ZonedDateTimeDeserializer.class
 org/example/models/Person.class
-org/example/models/Ticket.class
+org/example/models/DBModels/TicketWithMetadata.class
+org/example/interaction/UserAuthStatus.class
 org/example/interaction/Response.class
 org/example/models/TicketType.class
-org/example/interaction/ResponseStatus.class
 org/example/utility/Printable.class
+org/example/models/DBModels/UserData.class
+org/example/interaction/Status.class
+org/example/models/Ticket.class
+org/example/interaction/ResponseStatus.class

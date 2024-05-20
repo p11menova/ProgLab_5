@@ -1,5 +1,6 @@
 org/example/exceptions/NoSuchCommandException.class
 org/example/Main.class
+org/example/utility/ClientStatus.class
 org/example/utility/Client.class
 org/example/exceptions/WrongAmountOfArgumentsException.class
 org/example/utility/Console$1.class
@@ -14,6 +15,6 @@ org/example/utility/ConsoleMode.class
 org/example/utility/ScriptRunManager.class
 org/example/exceptions/NoSuchTicketTypeException.class
 org/example/exceptions/wrongRangeExceptions/WrongXCoordRangeException.class
-org/example/utility/SerializerToByteArray.class
 org/example/exceptions/CollectionIdIsTakenException.class
 org/example/exceptions/wrongRangeExceptions/WrongPriceRangeException.class
+org/example/utility/ConnectorWithServer.class

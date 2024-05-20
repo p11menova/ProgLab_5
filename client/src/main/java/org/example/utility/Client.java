@@ -1,143 +1,185 @@
 package org.example.utility;
 
-import org.example.interaction.Request;
-import org.example.interaction.Response;
-import org.example.interaction.ResponseStatus;
+import org.example.interaction.*;
 import org.example.exceptions.WrongFileRightException;
+import org.example.models.DBModels.TicketWithMetadata;
+import org.example.models.DBModels.UserData;
+import org.example.models.Ticket;
 
 import java.io.*;
 import java.net.ConnectException;
-import java.net.InetSocketAddress;
-import java.nio.channels.SocketChannel;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Client {
+    public ConnectorWithServer connector;
+    public ObjectOutputStream serverWriter;
+    public ObjectInputStream serverReader;
+    private Console console;
+    private UserData currentUser;
+    boolean authUser = false; // авторизован ли юзер
     private static final int MAX_RECONNECTION_ATTEMPTS = 5;
     public static int RECONNECTION_TIMEOUT = 2 * 1000;
     public int reconnectionAttempts;
-    public String host;
-    public int port;
-    public ObjectOutputStream serverWriter;
-    public ObjectInputStream serverReader;
-    private SocketChannel socketChannel;
-    private Console console;
+    public UserData userMetadata = null;
+    public ClientStatus clientStatus = ClientStatus.ACTIVE;
 
     public Client(String host, int port, Console console) {
-        this.host = host;
-        this.port = port;
+        this.connector = new ConnectorWithServer(host, port);
         this.console = console;
-        this.reconnectionAttempts = 0;
     }
 
-    public boolean connectToServer() throws IOException {
+    public boolean setConnection() {
         try {
             if (this.reconnectionAttempts > 0) console.println("переподключение к серверу...");
-            //if (this.reconnectionAttempts > 0) System.out.println("-> переподключение к серверу... попытка №"+reconnectionAttempts);
-            socketChannel = SocketChannel.open();
-            socketChannel.connect(new InetSocketAddress(this.host, this.port));
-            System.out.println("подключение к серверу установлено!");
-            serverWriter = new ObjectOutputStream(socketChannel.socket().getOutputStream());
-            serverReader = new ObjectInputStream(socketChannel.socket().getInputStream());
-            System.out.println("обмен данными разрешен");
-            reconnectionAttempts = 0;
+
+            connector.connectToServer();
+            console.println("подключение к серверу установлено!");
+
+
+
+            connectDataChannels();
+            console.println("обмен данными разрешен!");
+
+            this.reconnectionAttempts = 0;
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
+    public void connectDataChannels() throws IOException {
+        this.serverWriter = connector.getServerWriter();
+        this.serverReader = connector.getServerReader();
+
+    }
+
     public void disconnectToServer() {
         try {
-            socketChannel.socket().close();
+            connector.getSocketChannel().socket().close();
             serverReader.close();
             serverWriter.close();
         } catch (IOException e) {
-            System.out.println("произошла ошибка при отключении от сервера(\nпринудительное завершение работы...");
+            console.println("произошла ошибка при отключении от сервера(\nпринудительное завершение работы...");
             System.exit(1);
         }
     }
 
-    public boolean sendRequestToServer() throws IOException, ClassNotFoundException, ConnectException {
-        try {
-            Request request = null;
-            Response response = null;
-            while (response == null || response.getResponseStatus() != ResponseStatus.EXIT) {
-                request = console.getRequest();
-                serverWriter.writeObject(request);
-                serverWriter.flush();
-                response = (Response) serverReader.readObject();
-                if (response.getResponseStatus() == ResponseStatus.ERROR)
-                    console.print_error(response.getResponseBody());
-                else console.println(response.getResponseBody());
-                if (response.getResponseStatus() == ResponseStatus.SCRIPT) {
-                    try {
-                        console.setScriptMode(response.getResponseBody());
-                    } catch (FileNotFoundException e) {
-                        console.print_error("файл с таким названием не найден..");
-                    } catch (WrongFileRightException e) {
-                        console.print_error("файл не имеет прав на чтение");
-                    } catch (RuntimeException e) {
-                        console.print_error(e.getMessage());
-                        disconnectToServer();
-                        System.exit(1);
-                    }
-                }
-                if (response.getResponseStatus() == ResponseStatus.STOP_SCRIPT && console.consoleMode == ConsoleMode.SCRIPT){
-                    console.print_error(response.getResponseBody());
-                    console.println("ОБРАБОТКА СКРИПТА БУДЕТ ЗАВЕРШЕНА");
-                    console.denyFileMode();
-                }
-                if (response.getResponseStatus() == ResponseStatus.OBJECT) {
-                    serverWriter.writeObject(console.makeNewTicket(Integer.parseInt(request.getCommandStringArg().trim())));
-                    serverWriter.flush();
-                    response = (Response) serverReader.readObject();
-                    console.println(response.getResponseBody());
-                }
-            }
-        } catch (IOException e) {
-            if (!this.socketChannel.socket().getKeepAlive())
-                throw new ConnectException(); // упал на моменте соединения с сервером
-            throw new IOException(); // упал на моменте создания ридера райтера
+    public Status processServerResponse() throws IOException, ClassNotFoundException {
+        Response serverResponse = (Response) serverReader.readObject();
+        if (serverResponse.getResponseStatus() == ResponseStatus.EXIT) {
+            clientStatus = ClientStatus.EXIT;
+            console.println(serverResponse.getResponseBody());
+            return ResponseStatus.EXIT;
         }
-        return false;
+        if (serverResponse.getResponseStatus() == ResponseStatus.ERROR ||( serverResponse.getResponseStatus() == ResponseStatus.STOP_SCRIPT && console.consoleMode == ConsoleMode.INTERACTIVE)) {
+            console.print_error(serverResponse.getResponseBody());
+        } else console.println(serverResponse.getResponseBody());
+
+        if (serverResponse.getResponseStatus() == ResponseStatus.SCRIPT) {
+            try {
+                console.setScriptMode(serverResponse.getResponseBody());
+            } catch (FileNotFoundException e) {
+                console.print_error("файл с таким названием не найден..");
+            } catch (WrongFileRightException e) {
+                console.print_error("файл не имеет прав на чтение");
+            } catch (RuntimeException e) {
+                console.print_error(e.getMessage());
+                disconnectToServer();
+                System.exit(1);
+            }
+        }
+        if (serverResponse.getResponseStatus() == ResponseStatus.STOP_SCRIPT && console.consoleMode == ConsoleMode.SCRIPT) {
+            console.print_error(serverResponse.getResponseBody());
+            console.println("ОБРАБОТКА СКРИПТА БУДЕТ ЗАВЕРШЕНА");
+            console.denyFileMode();
+        }
+
+        if (serverResponse.getResponseStatus() == ResponseStatus.OBJECT) {
+            Ticket ticket = console.makeNewTicket(Integer.parseInt(console.request.getCommandStringArg().trim()));
+            sendTicketObjectToServer(ticket);
+            processServerResponse();}
+        if (serverResponse.getResponseStatus() == UserAuthStatus.NO_SUCH_LOGIN){
+            authUser = false;
+        }
+
+        return serverResponse.getResponseStatus();
+    }
+
+    public boolean sendTicketObjectToServer(Ticket ticket) throws IOException {
+        TicketWithMetadata ticketWithMetadata = new TicketWithMetadata(ticket);
+        ticketWithMetadata.setUserData(currentUser);
+        serverWriter.writeObject(ticketWithMetadata);
+        serverWriter.flush();
+        return true;
+
+    }
+
+    public boolean authUser() throws IOException, ClassNotFoundException {
+        UserAuthStatus userAuthStatus = null;
+        while (userAuthStatus != UserAuthStatus.OK){
+            currentUser = console.getUserData();
+            sendRequestToServer(new Request(currentUser.loginOrRegister, currentUser));
+            userAuthStatus = (UserAuthStatus) processServerResponse();}
+        return true;
+    }
+
+    public boolean sendRequestToServer(Request request) throws IOException {
+        request.setUserData(currentUser);
+        serverWriter.writeObject(request);
+        serverWriter.flush();
+
+        return true;
+
+    }
+
+    public boolean startClientServerInteraction() throws IOException, ClassNotFoundException {
+        try{
+        Request request = console.getRequest();
+        request.setUserData(currentUser);
+        return sendRequestToServer(request) && (processServerResponse() != ResponseStatus.EXIT);}
+        catch (IOException e) {
+            if (!connector.getSocketChannel().socket().getKeepAlive())
+                throw new ConnectException(); // упал на моменте соединения с сервером
+            throw new IOException();
+        }
+
     }
 
     public void go() {
-        try {
-            boolean processingStatus = true;
-            while (processingStatus) {
-                try {
-                    if (socketChannel == null) connectToServer();
-                    processingStatus = sendRequestToServer();
-                } catch (ConnectException e) {
-                    reconnectionAttempts++;
-                    System.out.println("разрыв соединения с сервером(");
-                    //Console.print_error("ошибка подключения к серверу");
-                    while (!connectToServer()) {
-                        if (reconnectionAttempts > MAX_RECONNECTION_ATTEMPTS) {
-                            console.print_error("превышен лимит попыток подключения.\ncервер временно не доступен.(..\nповторите попытку позже..");
-                            break;
-                        }
-                        console.println("повторная попытка подключения через " + RECONNECTION_TIMEOUT / 1000 + "c");
-                        //System.out.println("повторная попытка подключения через " + RECONNECTION_TIMEOUT / 1000 + "c");
-                        try {
-                            Thread.sleep(RECONNECTION_TIMEOUT);
-                        } catch (InterruptedException ex) {
-                            continue;
-                        }
-                        reconnectionAttempts++;
+        boolean processingStatus = true;
+
+        while (processingStatus) {
+            try {
+                if (connector.getSocketChannel()==null) setConnection() ;
+                if (!authUser) authUser = authUser();
+                processingStatus = startClientServerInteraction();
+                if (clientStatus == ClientStatus.EXIT) break;
+            } catch (IOException e) {
+                if (reconnectionAttempts == 0) console.println("разрыв соединения с сервером(");
+                reconnectionAttempts++;
+                while (!setConnection()) {
+                    if (reconnectionAttempts > MAX_RECONNECTION_ATTEMPTS) {
+                        console.print_error("превышен лимит попыток подключения.\ncервер временно не доступен.(..\nповторите попытку позже..");
+                        break;
                     }
-                } catch (IOException e) {
-                    console.print_error("ошибка при передаче данных на сервер..");
-
-                } catch (ClassNotFoundException e) {
-                    console.print_error("ошибка при десериализации( такого типа данных нет(");
+                    console.println("повторная попытка подключения через " + RECONNECTION_TIMEOUT / 1000 + "c");
+                    try {
+                        Thread.sleep(RECONNECTION_TIMEOUT);
+                    } catch (InterruptedException ex) {
+                        continue;
+                    }
+                    reconnectionAttempts++;
                 }
-                // break;
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-        disconnectToServer();
 
+//            } catch (IOException e) {
+//                System.out.println(e.getMessage());
+//                System.out.println(e.getClass());
+//                console.print_error("ошибка при передаче данных на сервер..");
+            } catch (ClassNotFoundException e) {
+                console.print_error("ошибка при десериализации( такого типа данных нет(");
+            }
+            if (!processingStatus) disconnectToServer();
+        }
     }
 }
+

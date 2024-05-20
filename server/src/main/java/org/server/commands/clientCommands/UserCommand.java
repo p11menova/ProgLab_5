@@ -1,16 +1,20 @@
 package org.server.commands.clientCommands;
 
+import org.example.interaction.Request;
 import org.example.interaction.Response;
+import org.server.commands.Command;
+
+import javax.activation.CommandObject;
 
 /**
  * Абстрактный класс команды. Служит родителем для всех пользовательских команд.
  */
-public abstract class Command {
+public abstract class UserCommand implements Command {
     protected String CommandName;
     protected String CommandDescription;
     protected Response response;
 
-    public Command(String name, String description){
+    public UserCommand(String name, String description){
         this.CommandName = name.split(" ",2)[0];
         this.CommandDescription = description;
     }
@@ -21,7 +25,7 @@ public abstract class Command {
      */
 
     //public abstract boolean go(String arg);
-    public abstract Response execute(String arg);
+    public abstract Response execute(Request request);
     public String getCommandName(){
         return this.CommandName;
     }

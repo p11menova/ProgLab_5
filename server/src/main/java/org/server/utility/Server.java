@@ -1,17 +1,19 @@
 package org.server.utility;
 
-import org.example.models.Ticket;
-import org.example.interaction.ResponseStatus;
 import org.server.App;
-import org.example.interaction.Request;
-import org.example.interaction.Response;
-import org.server.commands.serverCommands.SaveCommand;
+
+import org.server.utility.managers.ConnectionHandler;
+import org.server.utility.managers.DBInteraction.Users;
+import org.server.utility.managers.Outputer;
+import org.server.utility.managers.RunManager;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Objects;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static java.lang.Character.toChars;
 
@@ -19,20 +21,24 @@ import static java.lang.Character.toChars;
 // then press Enter. You can now see whitespace characters in your code.
 public class Server {
     public final int port;
-    private ServerSocket serverSocket;
     public Outputer outputer;
     public RunManager runManager;
+    public ExecutorService fixedThreadPool;
+    private ServerSocket serverSocket;
 
-    public Server(int port, RunManager runManager) {
+    public Server(int port, int maxClients, RunManager runManager) {
+
         this.port = port;
         this.outputer = new Outputer();
         this.runManager = runManager;
+        this.fixedThreadPool = Executors.newFixedThreadPool(15);
     }
 
     public void openServerSocket() throws IOException {
         try {
             App.logger.info("прослушивает порт:" + this.port);
-            serverSocket = new ServerSocket(this.port);
+            serverSocket = new ServerSocket();
+            serverSocket.bind(new InetSocketAddress(this.port));
             App.logger.info("ServerSocket opened");
             outputer.println("ServerSocket открыт");
         } catch (IOException e) {
@@ -40,17 +46,6 @@ public class Server {
         }
     }
 
-    public static String filterInputString(String data) {
-        char[] inCharArray = data.toCharArray();
-        int SPACE_CODE = (int) ' ';
-        int CURLY_BRACE = (int) '}';
-        int RUS_A_CODE = (int) 'А';
-        int RUS_YA_CODE = (int) 'я';
-        StringBuilder res = new StringBuilder();
-        data.chars().filter(x -> (SPACE_CODE <= x && x <= CURLY_BRACE || RUS_A_CODE <= x && x <= RUS_YA_CODE))
-                .forEach(x -> res.append(toChars(x)[0]));
-        return data;
-    }
 
     public Socket connectToClient() throws IOException {
         try {
@@ -64,67 +59,40 @@ public class Server {
         }
     }
 
-    public boolean processClientRequest(Socket clientSocket) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream clientReader = new ObjectInputStream(clientSocket.getInputStream());
-             ObjectOutputStream clientWriter = new ObjectOutputStream(clientSocket.getOutputStream())
-        ) {
-            Request request = null;
-            Response response = null;
-            while (response == null || response.getResponseStatus() != ResponseStatus.EXIT) {
-                if (response != null && response.getResponseStatus() == ResponseStatus.OBJECT) {
-                    Ticket newElem = (Ticket) clientReader.readObject();
-                    response = CommandManager.go(new Request(request.getCommandName(), newElem));
-                }
-                else {
-                    request = (Request) clientReader.readObject();
-                    response = CommandManager.go(request);
-                }
-                clientWriter.writeObject(response);
-                clientWriter.flush();
-            }
-            return true;
-        } catch (IOException e) {
-            App.logger.severe("ошибка при создании потоков ввода-вывода");
-        } catch (ClassNotFoundException e) {
-            App.logger.severe("ошибка при десериализации. некорректный тип данных(");
-        }
-        return false;
-
-    }
-
-    public void stop() {
-        try {
-            if (serverSocket == null) throw new RuntimeException();
-            serverSocket.close();
-        } catch (IOException e) {
-            outputer.print_error("ошибка при отключении сервера");
-            App.logger.severe("ошибка при отключении сервера");
-        } catch (RuntimeException e) {
-            outputer.print_error("там и так нечего закрывать(");
-            App.logger.severe("там и так нечего закрывать(");
-        }
-    }
-
     public void go() {
-        try {
+        try{
+            new Thread(()->{
+                Scanner scanner = new Scanner(System.in);
+                while(scanner.hasNextLine()){
+                    if (scanner.nextLine().trim().equals("users")){
+                        System.out.println("users, registered on server:{\n" + Users.String()+"}");
+                    };
+                }
+            }).start();
             openServerSocket();
-            boolean proccessingStatus = true;
-            while (proccessingStatus) {
-                try (Socket clientSocket = connectToClient()) {
-                    proccessingStatus = processClientRequest(clientSocket);
-                } catch (IOException | ClassNotFoundException ex) {
-                    proccessingStatus = false;
+            while (true) {
+                Socket clientSocket = connectToClient();
+                try {
+                    this.fixedThreadPool.submit(new ConnectionHandler(clientSocket)); //многопоточная обработка
+                    // proccessingStatus = processClientRequest(clientSocket);
+                } catch (Exception ex) {
+                   break;
                 }
             }
-        } catch (IOException e) {
-            App.logger.severe(e.getMessage());
-            outputer.print_error(e.getMessage());
+
+//        } catch (IOException e) {
+//            App.logger.severe(e.getMessage());
+//            outputer.print_error(e.getMessage());
+//        }
+//        stop();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        stop();
     }
-    public static void save(){
-        SaveCommand saveCommand = new SaveCommand(RunManager.collectionManager, RunManager.fileManager);
-        if (saveCommand.go()) App.logger.info("коллекция успешно сохранена в файл");
-        else App.logger.severe("ошибка при сохранении коллекции в файл(");
-    }
+
+//    public static void save() {
+//        SaveCommand saveCommand = new SaveCommand("save", RunManager.collectionManager, RunManager.fileManager);
+//        if (saveCommand.go()) App.logger.info("коллекция успешно сохранена в файл");
+//        else App.logger.severe("ошибка при сохранении коллекции в файл(");
+//    }
 }

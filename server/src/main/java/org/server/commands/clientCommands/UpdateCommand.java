@@ -1,11 +1,16 @@
 package org.server.commands.clientCommands;
 
+import org.example.interaction.Request;
+import org.example.models.DBModels.TicketWithMetadata;
 import org.example.models.Ticket;
 import org.server.exceptions.NoSuchElementException;
 import org.server.exceptions.WrongAmountOfArgumentsException;
 import org.example.interaction.Response;
 import org.example.interaction.ResponseStatus;
-import org.server.utility.CollectionManager;
+import org.server.utility.managers.CollectionManager;
+import org.server.utility.managers.DBInteraction.DBManager;
+
+import java.sql.SQLException;
 
 
 /**
@@ -13,26 +18,35 @@ import org.server.utility.CollectionManager;
  */
 public class UpdateCommand extends AbstractAddCommand {
     private int idToBeUpdated;
-    public UpdateCommand(CollectionManager collectionManager) {
-        super("update {key} {element}", " обновить значение элемента коллекции, айди которого равен заданному", collectionManager);
+    public UpdateCommand(CollectionManager collectionManager, DBManager dbManager) {
+        super("update {key} {element}", " обновить значение элемента коллекции, айди которого равен заданному", collectionManager, dbManager);
     }
     @Override
-    public Response execute(String arg) {
+    public Response execute(Request request) {
         try {
+            String arg = request.getCommandStringArg();
+            System.out.println(request.getUserData());
             if (arg.isEmpty()) throw new WrongAmountOfArgumentsException();
             int id = Integer.parseInt(arg.trim());
             if (!this.collectionManager.isIdTaken(id)) throw new NoSuchElementException();
+            if (!checkIfCanModify(request)) return new Response(ResponseStatus.ERROR, "у вас нет прав доступа на модификацию данного элемента!(");
             this.idToBeUpdated = id;
             return new Response(ResponseStatus.OBJECT, ">обновление экземпляра Ticket:");
         } catch (WrongAmountOfArgumentsException e) {
             return new Response(ResponseStatus.ERROR, e.getMessage());
-        } catch ( NoSuchElementException e){
+        } catch (NoSuchElementException e){
             return new Response(ResponseStatus.STOP_SCRIPT, e.getMessage());
         }
     }
     @Override
-    public Response execute(Ticket newElem) {
-        this.collectionManager.addToCollection(newElem);
+    public Response execute(TicketWithMetadata newElem) {
+        try {
+            dbManager.updateTicket(newElem);
+            collectionManager.updateElem(newElem);
+        } catch (SQLException e) {
+            return new Response(ResponseStatus.ERROR, "не удалось обновить данный элемент(");
+        }
         return new Response(ResponseStatus.OK, "тоопчик! элемент с айди=" + this.idToBeUpdated + " успешно обновлен!");
+
     }
 }

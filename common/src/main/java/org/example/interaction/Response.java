@@ -5,18 +5,18 @@ import org.example.models.Ticket;
 import java.io.Serializable;
 
 public class Response implements Serializable {
-    private ResponseStatus responseStatus;
+    private Status responseStatus;
     private String responseBody;
-    public Response(ResponseStatus responseStatus, String responseBody){
+    public Response(Status responseStatus, String responseBody){
         this.responseStatus = responseStatus;
         this.responseBody = responseBody;
     }
-    public Response(ResponseStatus responseStatus){
+    public Response(Status responseStatus){
         this.responseStatus = responseStatus;
         this.responseBody = null;
     }
 
-    public ResponseStatus getResponseStatus() {
+    public Status getResponseStatus() {
         return responseStatus;
     }
 

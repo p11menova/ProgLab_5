@@ -1,6 +1,6 @@
 package org.example.interaction;
 
-public enum ResponseStatus {
+public enum ResponseStatus implements Status{
     OK,
     ERROR,
     OBJECT,

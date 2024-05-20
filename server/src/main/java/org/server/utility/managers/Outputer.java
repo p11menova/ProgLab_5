@@ -1,4 +1,4 @@
-package org.server.utility;
+package org.server.utility.managers;
 
 import org.example.utility.Printable;
 

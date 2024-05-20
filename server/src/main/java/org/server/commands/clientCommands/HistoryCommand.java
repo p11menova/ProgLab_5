@@ -1,14 +1,15 @@
 package org.server.commands.clientCommands;
 
+import org.example.interaction.Request;
 import org.server.exceptions.WrongAmountOfArgumentsException;
 import org.example.interaction.Response;
 import org.example.interaction.ResponseStatus;
-import org.server.utility.CommandManager;
+import org.server.utility.managers.CommandManager;
 
 /**
  * Команда вывода текущей истории команд.
  */
-public class HistoryCommand extends Command{
+public class HistoryCommand extends UserCommand{
 
 
     public HistoryCommand() {
@@ -16,8 +17,9 @@ public class HistoryCommand extends Command{
     }
 
     @Override
-    public Response execute(String arg) {
+    public Response execute(Request request) {
         try {
+            String arg = request.getCommandStringArg();
             if (!arg.isEmpty()) throw new WrongAmountOfArgumentsException();
             return new Response(ResponseStatus.OK, CommandManager.getHistory());
         } catch (WrongAmountOfArgumentsException e) {

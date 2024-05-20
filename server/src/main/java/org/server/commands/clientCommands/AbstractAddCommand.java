@@ -1,9 +1,11 @@
 package org.server.commands.clientCommands;
 
 import org.example.interaction.Response;
+import org.example.models.DBModels.TicketWithMetadata;
 import org.example.models.Ticket;
-import org.server.utility.CollectionManager;
+import org.server.utility.managers.CollectionManager;
 import org.server.utility.ModelsValidators.NewTicketValidator;
+import org.server.utility.managers.DBInteraction.DBManager;
 
 /**
  * Абстрактный класс команды добавления экземпляра.
@@ -11,13 +13,13 @@ import org.server.utility.ModelsValidators.NewTicketValidator;
  */
 public abstract class AbstractAddCommand extends ChangingCollectionCommand {
     NewTicketValidator ticketValidator;
-    public AbstractAddCommand(String CommandName, String CommandDescription, CollectionManager collectionManager) {
-        super(CommandName, CommandDescription, collectionManager);
+    public AbstractAddCommand(String CommandName, String CommandDescription, CollectionManager collectionManager, DBManager dbManager) {
+        super(CommandName, CommandDescription, collectionManager, dbManager);
         this.ticketValidator = new NewTicketValidator();
     }
-    public abstract Response execute(Ticket newTicket);
-    public boolean validate(Ticket newElem){
-        return this.ticketValidator.validateTicket(collectionManager, newElem);
-    }
+    public abstract Response execute(TicketWithMetadata newTicket);
+//    public boolean validate(Ticket newElem){
+//        return this.ticketValidator.validateTicket(collectionManager, newElem);
+//    }
 
 }

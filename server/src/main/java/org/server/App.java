@@ -2,13 +2,13 @@ package org.server;
 
 
 
-import org.example.utility.*;
-import org.server.commands.clientCommands.AbstractAddCommand;
-import org.server.commands.clientCommands.ChangingCollectionCommand;
-import org.server.commands.clientCommands.InsertCommand;
-import org.server.utility.RunManager;
+import org.server.utility.managers.RunManager;
 import org.server.utility.Server;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -24,16 +24,23 @@ public class App {
      */
     public static void main(String[] args) {
         try {
+
             int port = Integer.parseInt(args[0]);
             if (port <= 0 || port >= 65536) throw new IllegalArgumentException("неверное значение порта");
-            RunManager runManager = new RunManager();
+
+            Class.forName("org.postgresql.Driver");
+            RunManager runManager = new RunManager(args[1], args[2], args[3]);
             runManager.prepare();
-            Server server = new Server(port, runManager);
+
+            Server server = new Server(port, 15, runManager);
             server.go();
         } catch (NumberFormatException e) {
             App.logger.severe("порт должен быть целым числом");
-        } catch (IllegalArgumentException e){
+
+        } catch (IllegalArgumentException e) {
             App.logger.severe(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }

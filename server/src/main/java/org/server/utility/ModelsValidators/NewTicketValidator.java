@@ -2,13 +2,10 @@ package org.server.utility.ModelsValidators;
 
 import org.example.models.Coordinates;
 import org.example.models.Ticket;
-import org.example.models.TicketType;
-import org.server.exceptions.NoSuchTicketTypeException;
-import org.server.exceptions.WrongFieldTypeException;
 import org.server.exceptions.wrongRangeExceptions.WrongPriceRangeException;
 import org.server.exceptions.wrongRangeExceptions.WrongXCoordRangeException;
 import org.server.exceptions.wrongRangeExceptions.WrongYCoordRangeException;
-import org.server.utility.CollectionManager;
+import org.server.utility.managers.CollectionManager;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

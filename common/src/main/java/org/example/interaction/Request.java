@@ -1,16 +1,20 @@
 package org.example.interaction;
 
+import org.example.models.DBModels.TicketWithMetadata;
+import org.example.models.DBModels.UserData;
 import org.example.models.Ticket;
 
 
+import javax.swing.plaf.metal.MetalIconFactory;
 import java.io.Serializable;
 
 public class Request implements Serializable {
     private String CommandName;
     private String CommandStringArg;
+    private UserData userData;
 
-    private Ticket NewTicketModel; // при <? extends AbstractAddCommand>
-    public Request(String cn,  Ticket newTick){
+    private TicketWithMetadata NewTicketModel; // при <? extends AbstractAddCommand>
+    public Request(String cn,  TicketWithMetadata newTick){
         this.CommandName = cn;
         this.NewTicketModel = newTick;
     }
@@ -18,6 +22,10 @@ public class Request implements Serializable {
         this.CommandName = cn;
         this.CommandStringArg = ca;
         this.NewTicketModel = null;
+    }
+    public Request(String cn, UserData userData){
+        this.CommandName = cn;
+        this.userData = userData;
     }
     public Request(){
         new Request("", "");
@@ -29,8 +37,14 @@ public class Request implements Serializable {
     public String getCommandStringArg(){
         return CommandStringArg;
     }
-    public Ticket getNewTicketModel() {
+    public TicketWithMetadata getNewTicketModel() {
         return NewTicketModel;
+    }
+    public UserData getUserData(){
+        return userData;
+    }
+    public void setUserData(UserData userData){
+        this.userData = userData;
     }
 
 }

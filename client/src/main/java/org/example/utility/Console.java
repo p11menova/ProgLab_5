@@ -1,5 +1,6 @@
 package org.example.utility;
 
+import org.example.models.DBModels.UserData;
 import org.example.models.Ticket;
 import org.example.utility.ModelsAskers.NewTicketAsker;
 import org.example.exceptions.NoSuchElementException;
@@ -31,6 +32,10 @@ public class Console implements Printable {
     public boolean notPrinting = false; // не печатает при создании нового экземпляра тикет
     public Request request;
     public boolean requestIsReady = false;
+    public UserData userData;
+
+    public boolean user_in = false;
+
 
     public Console(Scanner scanner) {
         this.in = scanner;
@@ -84,28 +89,7 @@ public class Console implements Printable {
         if (!notPrinting) System.out.printf("\t" + obj);
     }
 
-    /**
-     * Обрабатывает пользовательский ввод
-     */
-//    public static void readUserInput() {
-//        printf(Console.promt1);
-//
-//        while (in.hasNextLine()) {
-//            String in_data = in.nextLine().trim() + " ";
-//            if (in_data.equals(" "))
-//                println("пустой ввод :(( для получения информации о возможных командах введите 'help'");
-//            else {
-//                String[] in_data_splited = in_data.split(" ", 2);
-//                String currentCommandName = in_data_splited[0];
-//                String currentCommandArgs = in_data_splited[1];
-//                if (CommandManager.go(currentCommandName, currentCommandArgs))
-//                    CommandManager.addToHistory(currentCommandName);
-//            }
-//            printf(Console.promt1);
-//        }
-//        Console.print_error("вы ввели символы завершения программы(");
-//
-//    }
+
 
     /**
      * Устанавливает сканнер скрипта
@@ -138,7 +122,7 @@ public class Console implements Printable {
     /**
      * Обрабатывает чтение из скрипта
      *
-     * @param //in       сканнер скрипта
+     * @param //in  сканнер скрипта
      * @param //filename название исполняемого скрипта
      */
     public void readScriptInput() {
@@ -175,6 +159,32 @@ public class Console implements Printable {
             }
         }
     }
+    public void readUserAuth(){
+        String login = null;
+        String password=null;
+        printf("у вас уже есть аккаунт или вы впервые?\n1 - войти\n2 - зарегистрироваться\n");
+
+        String loginOrReg = "";
+        while ((loginOrReg == "") || !loginOrReg.equals("1") && !loginOrReg.equals("2")) {
+            printf(promt1 + "введите 1 или 2:");
+            if (in.hasNextLine()) loginOrReg = in.nextLine().trim();
+        }
+
+        printf(promt1+"введите логин:");
+        if (in.hasNextLine()) login = in.nextLine();
+        printf(promt1+"введите пароль:");
+        if (in.hasNextLine()) password = in.nextLine();
+        this.userData = new UserData(loginOrReg, login, password);
+        this.user_in = true;
+    }
+    public UserData getUserData(){
+        boolean user_in = false;
+        while (!user_in){
+            readUserAuth();
+            return this.userData;
+        }
+        return null;
+    }
 
     public Request getRequest() {
         while (!this.requestIsReady)
@@ -189,7 +199,6 @@ public class Console implements Printable {
     public Ticket makeNewTicket(int id) {
         if (consoleMode == ConsoleMode.INTERACTIVE)
             return new NewTicketAsker(this).validateTicketFromInteractiveMode(id);
-        //    return new NewTicketAsker(this).validateTicketFromInteractiveMode(id);
         notPrinting = true;
         Ticket newElem = new NewTicketAsker(this).validateTicketFromScript(id);
         notPrinting = false;

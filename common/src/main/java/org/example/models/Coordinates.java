@@ -31,7 +31,18 @@ public class Coordinates implements Serializable {
     public void set_coordY(int y){
         this.y = y;
     }
+    public void set_coords(String coords){
+        StringBuilder sb = new StringBuilder(coords);
+        sb = sb.deleteCharAt(coords.length()-1);
+        sb = sb.deleteCharAt(0);
+        String[] c = sb.toString().split(",");
 
+        set_coordX(Double.parseDouble(c[0].trim()));
+        set_coordY(Integer.parseInt(c[1].trim()));
+
+
+
+    }
     @Override
     public String toString() {
         return "(" +

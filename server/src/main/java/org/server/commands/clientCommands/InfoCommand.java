@@ -1,21 +1,23 @@
 package org.server.commands.clientCommands;
 
+import org.example.interaction.Request;
 import org.server.exceptions.WrongAmountOfArgumentsException;
 import org.example.interaction.Response;
 import org.example.interaction.ResponseStatus;
-import org.server.utility.CollectionManager;
+import org.server.utility.managers.CollectionManager;
 
 /**
  * Команда вывода информации о коллекции.
  */
-public class InfoCommand extends Command {
+public class InfoCommand extends UserCommand {
     public InfoCommand() {
         super("info", "вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)");
     }
 
     @Override
-    public Response execute(String arg) {
+    public Response execute(Request request) {
         try {
+            String arg = request.getCommandStringArg();
             if (!arg.isEmpty()) throw new WrongAmountOfArgumentsException();
             return new Response(ResponseStatus.OK, CollectionManager.getInfo());
         }
