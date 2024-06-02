@@ -1,8 +1,7 @@
 package org.server.models;
 
-import org.example.models.DBModels.TicketWithMetadata;
-import org.example.models.DBModels.UserData;
-import org.example.models.Ticket;
+import org.common.models.DBModels.TicketWithMetadata;
+import org.common.models.DBModels.UserData;
 import org.server.App;
 import org.server.utility.ModelsValidators.NewTicketValidator;
 import org.server.utility.managers.CollectionManager;
@@ -17,19 +16,27 @@ public class Tickets2 {
     public void addToList(TicketWithMetadata ticket){
         tickets.add(ticket);
     }
+    public void clear(){
+        tickets.clear();
+    }
     public boolean addToCollectionIfOkay(CollectionManager collectionManager) {
     AtomicBoolean are_added = new AtomicBoolean(false);
+    StringBuilder added_ids = new StringBuilder();
     for (TicketWithMetadata ticketWithMetadata : tickets) {
-        System.out.println(ticketWithMetadata.toString());
         if (new NewTicketValidator().validateTicket(collectionManager, ticketWithMetadata.ticket)) {
             UserData userData = Users.getById(ticketWithMetadata.userData.get_id());
             ticketWithMetadata.setUserData(userData);
             collectionManager.addToCollection(ticketWithMetadata);
 
-            App.logger.info("в коллекцию был добавлен элемент с id="+ticketWithMetadata.getTicket().get_id());
+            added_ids.append(ticketWithMetadata.getTicket().get_id()+"; ");
             are_added.set(true);
         }
     }
-    return are_added.get();
+        if (added_ids.isEmpty()) {
+            App.logger.warning("коллекция не была заполнена экземплярами из БД");
+        } else {
+            App.logger.info("в коллекцию были добавлены элементы с id = { " + added_ids + "}");
+        }
+        return are_added.get();
     }
 }

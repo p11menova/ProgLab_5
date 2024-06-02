@@ -1,10 +1,10 @@
 package org.server.commands.clientCommands;
 
-import org.example.interaction.Request;
+import org.common.interaction.Request;
 import org.server.exceptions.CollectionIdIsTakenException;
 import org.server.exceptions.WrongAmountOfArgumentsException;
-import org.example.interaction.Response;
-import org.example.interaction.ResponseStatus;
+import org.common.interaction.Response;
+import org.common.interaction.ResponseStatus;
 import org.server.utility.managers.CollectionManager;
 import org.server.utility.managers.DBInteraction.DBManager;
 
@@ -29,7 +29,6 @@ public class RemoveByKeyCommand extends ChangingCollectionCommand{
             if (!checkIfCanModify(request)) return new Response(ResponseStatus.ERROR, "у вас нет прав на модификацию данного элемента(");
             try {
                 dbManager.deleteById(i);
-                this.collectionManager.removeWithId(i);
             } catch (SQLException e) {
                 return new Response(ResponseStatus.ERROR, "не удалось удалить элемент из БД(");
             }

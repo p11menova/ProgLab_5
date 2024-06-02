@@ -1,9 +1,9 @@
 package org.server.commands.clientCommands;
 
-import org.example.interaction.Request;
+import org.common.interaction.Request;
 import org.server.exceptions.WrongFileRightException;
-import org.example.interaction.Response;
-import org.example.interaction.ResponseStatus;
+import org.common.interaction.Response;
+import org.common.interaction.ResponseStatus;
 
 import java.io.File;
 import java.io.FileNotFoundException;

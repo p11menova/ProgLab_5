@@ -1,8 +1,7 @@
 package org.server.commands.clientCommands;
 
-import org.example.interaction.Response;
-import org.example.models.DBModels.TicketWithMetadata;
-import org.example.models.Ticket;
+import org.common.interaction.Response;
+import org.common.models.DBModels.TicketWithMetadata;
 import org.server.utility.managers.CollectionManager;
 import org.server.utility.ModelsValidators.NewTicketValidator;
 import org.server.utility.managers.DBInteraction.DBManager;

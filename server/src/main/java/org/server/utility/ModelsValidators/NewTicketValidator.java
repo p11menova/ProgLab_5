@@ -1,7 +1,7 @@
 package org.server.utility.ModelsValidators;
 
-import org.example.models.Coordinates;
-import org.example.models.Ticket;
+import org.common.models.Coordinates;
+import org.common.models.Ticket;
 import org.server.exceptions.wrongRangeExceptions.WrongPriceRangeException;
 import org.server.exceptions.wrongRangeExceptions.WrongXCoordRangeException;
 import org.server.exceptions.wrongRangeExceptions.WrongYCoordRangeException;

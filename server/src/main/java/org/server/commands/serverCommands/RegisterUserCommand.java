@@ -1,8 +1,8 @@
 package org.server.commands.serverCommands;
 
-import org.example.interaction.Response;
-import org.example.interaction.UserAuthStatus;
-import org.example.models.DBModels.UserData;
+import org.common.interaction.Response;
+import org.common.interaction.UserAuthStatus;
+import org.common.models.DBModels.UserData;
 import org.server.App;
 import org.server.utility.managers.DBInteraction.DBManager;
 import org.server.utility.managers.DBInteraction.Users;
@@ -19,9 +19,14 @@ public class RegisterUserCommand extends AuthorizationCommand {
     public Response execute(UserData userData) {
         if (!Users.register(userData)) return new Response(UserAuthStatus.ALREADY_EXISTS, "пользователь с логином: " + userData.login +" уже существует(" );
         try {
-            System.out.println("inserting into users");
-            this.dbManager.insertIntoUsers(userData);
-            System.out.println("successfully inserted into users");
+            System.out.println("inserting into users id="+userData.id);
+            int id = this.dbManager.insertIntoUsers(userData); //добавляем + получаем ид нового юзера
+            if (id > -1) {
+                userData.set_id(id);
+                Users.register(userData);
+            } else throw new SQLException();
+
+            App.logger.info("successfully inserted user" + userData.login +"into users");
         } catch (SQLException e) {
             return new Response(UserAuthStatus.ERROR, "не удалось добавить юзера в БД");
         }

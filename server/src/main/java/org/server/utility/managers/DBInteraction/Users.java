@@ -1,12 +1,13 @@
 package org.server.utility.managers.DBInteraction;
 
-import org.example.models.DBModels.UserData;
+import org.common.models.DBModels.UserData;
 
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.TreeMap;
 
 public class Users {
-    public static HashMap<String, UserData> users = new HashMap<>();
+    public static TreeMap<String, UserData> users = new TreeMap<>();
 
     public synchronized static boolean isUserExists(String login) {
         return users.get(login) != null;
@@ -18,7 +19,7 @@ public class Users {
 
     }
     public synchronized static boolean register(UserData user){
-        if (!users.containsKey(user.login)) {
+        if (users.get(user.login) == null) {
             users.put(user.login, user);
             return true;
            }
@@ -34,9 +35,13 @@ public class Users {
 
     public static String String() {
         StringBuilder sb = new StringBuilder();
-        for (UserData user:users.values()){
-            sb.append("id:"+user.get_id() +" login:"+user.login+";\n");
-        }
+        sb.append(String.format("%6s | %16s", "id", "login"));
+        sb.append("\n--------------------------\n");
+        users.values()
+                .stream()
+                .sorted(Comparator.comparingInt(UserData::get_id))
+                .forEach(v -> sb.append(String.format("%6s | %16s \n", v.get_id(), v.login)));
+
         return sb.toString();
     }
 }

@@ -1,6 +1,6 @@
 package org.server.utility.managers;
 
-import org.example.utility.Printable;
+import org.common.utility.Printable;
 
 public class Outputer implements Printable {
     @Override

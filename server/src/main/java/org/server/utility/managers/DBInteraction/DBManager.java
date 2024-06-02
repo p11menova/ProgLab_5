@@ -1,24 +1,21 @@
 package org.server.utility.managers.DBInteraction;
 
-import org.example.models.Coordinates;
-import org.example.models.DBModels.TicketWithMetadata;
-import org.example.models.DBModels.UserData;
-import org.example.models.Person;
-import org.example.models.Ticket;
-import org.example.models.TicketType;
+import org.common.models.Coordinates;
+import org.common.models.DBModels.TicketWithMetadata;
+import org.common.models.DBModels.UserData;
+import org.common.models.Person;
+import org.common.models.Ticket;
+import org.common.models.TicketType;
+import org.server.App;
 import org.server.models.Tickets2;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
-
-import static org.server.utility.managers.DBInteraction.DBCommands.getUserLoginByID;
 
 public class DBManager {
     private Connection connection;
@@ -42,65 +39,60 @@ public class DBManager {
         auth.put("password", password);
 
         this.connection = DriverManager.getConnection(host, auth);
-        System.out.println("successfully connected to DB");
+        System.out.println("successfully connected to DB \n --DB_HOST: "+ host + " \n --LOGIN: " + login);
+        App.logger.info("successfully connected to DB \n --DB_HOST: "+ host + " \n --LOGIN: " + login);
 
         this.st = connection.createStatement();
 
 
         createTables();
+        createTriggerForDeleting(); // триггер сохраняющий айди удаленных элементов
 
 
     }
+
     public void createTables() throws SQLException {
+        App.logger.info("=======PREPARING WORKS WITH DATABASE=======");
+
         st.execute(DBCommands.createTableUsers());
         System.out.println("successfully created table Users");
+        App.logger.info("successfully created table Users");
+
         st.execute(DBCommands.createTableTickets());
         System.out.println("successfully created table Tickets");
+        App.logger.info("successfully created table Tickets");
 
 
-
-      //  insertIntoUsers(new UserData("kate", "kate"));
-        Ticket ticket = new Ticket();
-        ticket.set_id(0);
-        ticket.set_name("name");
-        Coordinates coords = new Coordinates();
-        coords.set_coordX(1.0);
-        coords.set_coordY(1);
-        ticket.set_coordinates(coords);
-        ticket.set_refundable(true);
-        ticket.set_type(TicketType.VIP);
-        Person p = new Person();
-        p.setHeight(1.0);
-
-        p.setBirthday(LocalDateTime.now());
-        ticket.set_person(p);
-        ticket.set_creationData(ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC));
-        TicketWithMetadata ticketWithMetadata = new TicketWithMetadata(ticket);
-        ticketWithMetadata.setUserData(new UserData("kate", "kate"));
-      //  insertIntoTickets(ticketWithMetadata);
-
-        updateTicket(ticketWithMetadata);
 
         selectUsers();
+        App.logger.info("добавлены юзеры из БД");
         selectTickets();
+        App.logger.info("добавлены экземпляры Ticket из БД");
+        App.logger.info("=======READY FOR DATABASE INTERACTION=======");
 
     }
-    public void insertIntoUsers(UserData userData) throws SQLException {
+    public void createTriggerForDeleting() throws SQLException{
+        st.execute(DBCommands.createTriggerForDeleting());
+    }
+    public int insertIntoUsers(UserData userData) throws SQLException {
         st.execute(DBCommands.insertIntoUsers(userData));
+        ResultSet rs = st.executeQuery(DBCommands.getUserIDByLogin(userData.login));
+        if (rs.next()){
+            return Integer.parseInt(rs.getString("id"));
+        }
+
+        return -1;
     }
     public void insertIntoTickets(TicketWithMetadata ticket) throws SQLException{
         ResultSet rs = st.executeQuery(DBCommands.getUserIDByLogin(ticket.userData.login));
         if (rs.next()){
             String user_id = rs.getString("id");
             st.execute(DBCommands.insertIntoTickets(ticket, user_id));
-
         }
 
     }
     public static boolean loginUser(UserData userData, String password) {
-        boolean res = Users.checkPassword(userData, password);
-        System.out.println("dbmanager res" + res);
-        return res;
+        return Users.checkPassword(userData, password);
     }
     public void selectUsers() throws SQLException{
         ResultSet rs = st.executeQuery(DBCommands.getUsers());
@@ -110,19 +102,22 @@ public class DBManager {
                     rs.getString("login"),
                     rs.getString("hashed_password"),
                     rs.getString("salt"));
-            System.out.println(userData);
             Users.register(userData);
         }
     }
-    public void getUserByLogin(String login) throws SQLException{
+    public String getUserIDByLogin(String login) throws SQLException{
         ResultSet rs = st.executeQuery(DBCommands.getUserIDByLogin(login));
         if (!rs.next()){
             throw new SQLException();
         }
+        return rs.getString("id");
+
 
     }
+
     public Tickets2 selectTickets() throws SQLException {
         ResultSet rs = st.executeQuery(DBCommands.getTickets());
+        selectedTickets.clear();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -135,7 +130,6 @@ public class DBManager {
             coords.set_coords(rs.getString("coordinates"));
             ticket.set_coordinates(coords);
             String price = rs.getString("price");
-            System.out.println(price);
             ticket.set_price(price == null ? null : Long.parseLong(price));
             LocalDateTime creation_date = LocalDateTime.parse(rs.getString("creation_date"), formatter);
             ZonedDateTime zdt = creation_date.atZone(ZoneId.of( "UTC"));
@@ -160,8 +154,18 @@ public class DBManager {
     }
     public void deleteById(int id) throws SQLException{
         st.execute(DBCommands.deleteFromTicketsById(String.valueOf(id)));
+        st.execute(DBCommands.clearDeletedRows());
+
     }
-    public void clearByUser(int id) throws SQLException{
-        st.execute(DBCommands.clearByUser(id));
+    public String clearByUser(int id) throws SQLException{
+        StringBuilder res = new StringBuilder();
+
+        st.execute(DBCommands.clearByUser(id)); //удаляем записи
+        ResultSet rs = st.executeQuery(DBCommands.getDeletedIds()); // добавляем айдишники удаленных строк в табличк deleted_rows
+        while (rs.next()){
+            res.append(rs.getString("id")).append(" ");
+        }
+        st.execute(DBCommands.clearDeletedRows()); // очищаем табличк deleted_rows
+        return res.toString();
     }
 }

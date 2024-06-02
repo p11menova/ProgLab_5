@@ -15,10 +15,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static java.lang.Character.toChars;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
 public class Server {
     public final int port;
     public Outputer outputer;
@@ -52,7 +49,7 @@ public class Server {
             outputer.println("Подключение к клиенту по данному сокету");
             Socket clientSocket = serverSocket.accept();
             outputer.println("Сервер успешно соединен с клиентом");
-            App.logger.info("Сервер успешно соединен с клиентом порт=" + port);
+            App.logger.info("==========SERVER SUCCESSFULLY CONNECTED TO CLIENT ON PORT " + port + "=======");
             return clientSocket;
         } catch (IOException e) {
             throw new IOException("Ошибка соединения с клиентом( по данному сокету");
@@ -74,25 +71,15 @@ public class Server {
                 Socket clientSocket = connectToClient();
                 try {
                     this.fixedThreadPool.submit(new ConnectionHandler(clientSocket)); //многопоточная обработка
-                    // proccessingStatus = processClientRequest(clientSocket);
                 } catch (Exception ex) {
                    break;
                 }
             }
 
-//        } catch (IOException e) {
-//            App.logger.severe(e.getMessage());
-//            outputer.print_error(e.getMessage());
-//        }
-//        stop();
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-//    public static void save() {
-//        SaveCommand saveCommand = new SaveCommand("save", RunManager.collectionManager, RunManager.fileManager);
-//        if (saveCommand.go()) App.logger.info("коллекция успешно сохранена в файл");
-//        else App.logger.severe("ошибка при сохранении коллекции в файл(");
-//    }
 }

@@ -1,8 +1,8 @@
 show
 show
 help
-insert 1
-name
+insert 13
+itmo
 1
 1
 1
@@ -11,8 +11,41 @@ vip
 12
 2000 09 09
 inset
-insert 3
-ff
-1
-1
-r
+insert 0
+rasetle
+14
+13
+14
+false
+cheap
+12
+2000 09 09
+insert 52
+meow
+14
+13
+14
+false
+CHEAP
+12
+2000 09 10
+insert 88
+mAark
+144
+134
+144
+true
+VIP
+12
+2000 09 10
+insert 18
+alice
+144
+134
+144
+true
+VIP
+12
+1999 09 09
+
+

@@ -1,11 +1,9 @@
 package org.server.commands.clientCommands;
 
-import org.example.interaction.Request;
-import org.example.interaction.Response;
-import org.example.interaction.ResponseStatus;
+import org.common.interaction.Request;
+import org.common.interaction.Response;
+import org.common.interaction.ResponseStatus;
 import org.server.commands.Command;
-import org.server.commands.serverCommands.AuthorizationCommand;
-import org.server.commands.serverCommands.ServerCommand;
 import org.server.utility.managers.CommandManager;
 
 import java.util.Map;

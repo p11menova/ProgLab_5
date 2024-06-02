@@ -1,17 +1,17 @@
 package org.server.commands.clientCommands;
 
-import org.example.interaction.Request;
-import org.example.models.Coordinates;
-import org.example.models.DBModels.TicketWithMetadata;
-import org.example.models.Ticket;
+import org.common.interaction.Request;
+import org.common.models.Coordinates;
+import org.common.models.DBModels.TicketWithMetadata;
+import org.common.models.Ticket;
 import org.server.exceptions.WrongAmountOfArgumentsException;
-import org.example.interaction.Response;
-import org.example.interaction.ResponseStatus;
+import org.common.interaction.Response;
+import org.common.interaction.ResponseStatus;
 import org.server.utility.managers.CollectionManager;
 
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -29,11 +29,11 @@ public class GroupCountingByCoordinatesCommand extends UserCommand{
         try {
             String arg = request.getCommandStringArg();
             if (!arg.isEmpty()) throw new WrongAmountOfArgumentsException();
-            Hashtable<Integer, TicketWithMetadata> ht1 = this.collectionManager.getTicketsCollection();
-            Hashtable<Integer, Ticket> ht = new Hashtable<>();
+            TreeMap<Integer, TicketWithMetadata> ht1 = this.collectionManager.getTicketsCollection();
+            TreeMap<Integer, Ticket> ht = new TreeMap<>();
 
-            while (ht1.keys().hasMoreElements()){
-                Integer key = ht.keys().nextElement();
+            while (ht1.descendingKeySet().iterator().hasNext()){
+                Integer key = ht.descendingKeySet().iterator().next();
                 ht.put(key, ht1.get(key).ticket);
             }
             if (ht.isEmpty()) {

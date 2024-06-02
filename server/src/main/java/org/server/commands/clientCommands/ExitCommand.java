@@ -1,9 +1,9 @@
 package org.server.commands.clientCommands;
 
-import org.example.interaction.Request;
+import org.common.interaction.Request;
 import org.server.exceptions.WrongAmountOfArgumentsException;
-import org.example.interaction.Response;
-import org.example.interaction.ResponseStatus;
+import org.common.interaction.Response;
+import org.common.interaction.ResponseStatus;
 
 /**
  * Команда завершения работы программы (без сохранения в файл).

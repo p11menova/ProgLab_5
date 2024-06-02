@@ -1,7 +1,7 @@
 package org.server.utility.managers.DBInteraction;
 
-import org.example.models.DBModels.TicketWithMetadata;
-import org.example.models.DBModels.UserData;
+import org.common.models.DBModels.TicketWithMetadata;
+import org.common.models.DBModels.UserData;
 
 import java.time.format.DateTimeFormatter;
 
@@ -89,5 +89,28 @@ public class DBCommands {
     }
     public static String clearByUser(int id){
         return String.format("DELETE FROM Tickets WHERE user_id=%s", id);
+    }
+    public static String getDeletedIds(){
+        return "SELECT * FROM deleted_rows;";
+    }
+    public static String createTriggerForDeleting(){
+        return "DROP TABLE IF EXISTS deleted_rows;" +
+                "CREATE  TABLE deleted_rows (id INTEGER); " +
+                "CREATE OR REPLACE FUNCTION log_deleted_rows() " +
+                "RETURNS TRIGGER AS $$ " +
+                "BEGIN " +
+                    "INSERT INTO deleted_rows (id) " +
+                    "VALUES (OLD.id); " +
+                    "RETURN OLD; " +
+                "END;" +
+                "$$ LANGUAGE plpgsql;" +
+                "CREATE OR REPLACE TRIGGER log_deleted_trigger " +
+                "AFTER DELETE ON tickets " +
+                "FOR EACH ROW " +
+                "EXECUTE FUNCTION log_deleted_rows();\n";
+    }
+
+    public static String clearDeletedRows(){
+        return "DELETE FROM deleted_rows;";
     }
 }

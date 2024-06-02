@@ -1,10 +1,9 @@
 package org.server.utility.managers;
 
-import org.example.interaction.Request;
-import org.example.interaction.Response;
-import org.example.interaction.ResponseStatus;
-import org.example.models.DBModels.TicketWithMetadata;
-import org.example.models.Ticket;
+import org.common.interaction.Request;
+import org.common.interaction.Response;
+import org.common.interaction.ResponseStatus;
+import org.common.models.DBModels.TicketWithMetadata;
 import org.server.App;
 
 import java.io.IOException;
@@ -14,7 +13,6 @@ import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class ConnectionHandler implements Runnable {
     public Socket clientSocket;
@@ -53,7 +51,6 @@ public class ConnectionHandler implements Runnable {
 
                     response = fixedThreadPool.submit(new ProcessRequestHandler(request)).get();
                     Response finalResponse = response;
-                    System.out.println(response.getResponseStatus());
                     new Thread(() -> {
                         try {
                             clientWriter.writeObject(finalResponse);
@@ -64,7 +61,7 @@ public class ConnectionHandler implements Runnable {
                     }).start();
                     // if (response.getResponseStatus() == ResponseStatus.EXIT) stop();
                 } catch (IOException e) {
-                    App.logger.info("клиент по сокету" + clientSocket.getLocalPort() + "отключился");
+                    App.logger.info("====CLIENT ON SOCKET " + clientSocket.getLocalPort() + " DISCONNECTED=====");
                     break;
                 }
 

@@ -1,9 +1,8 @@
 package org.server.utility.managers;
 
-import org.example.interaction.UserAuthStatus;
-import org.example.models.DBModels.TicketWithMetadata;
-import org.example.models.DBModels.UserData;
-import org.example.models.Ticket;
+import org.common.interaction.UserAuthStatus;
+import org.common.models.DBModels.TicketWithMetadata;
+import org.common.models.DBModels.UserData;
 import org.server.App;
 import org.server.commands.Command;
 import org.server.commands.clientCommands.AbstractAddCommand;
@@ -11,16 +10,15 @@ import org.server.commands.clientCommands.ChangingCollectionCommand;
 
 import org.server.commands.clientCommands.UserCommand;
 import org.server.commands.serverCommands.AuthorizationCommand;
-import org.server.commands.serverCommands.ServerCommand;
 import org.server.exceptions.NoSuchCommandException;
-import org.example.interaction.Request;
-import org.example.interaction.Response;
-import org.example.interaction.ResponseStatus;
-import org.server.utility.Server;
-import org.server.utility.managers.DBInteraction.DBCommands;
-import org.server.utility.managers.DBInteraction.DBManager;
+import org.common.interaction.Request;
+import org.common.interaction.Response;
+import org.common.interaction.ResponseStatus;
+
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.server.utility.managers.RunManager.dbManager;
@@ -37,7 +35,7 @@ public class CommandManager {
     /**
      * История последних пользовательских команд
      */
-    public static final List<String> commandsHistory = new ArrayList<>();
+    public static final Map<String, ArrayList<String>> commandsHistory = new HashMap<>();
     /**
      * Количество хранимых последних команд в истории
      */
@@ -73,8 +71,13 @@ public class CommandManager {
      *
      * @param commandName название команды
      */
-    public static void addToHistory(String commandName) {
-        commandsHistory.add(commandName);
+    public static void addToHistory(UserData userData, String commandName) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (commandsHistory.get(userData.login) == null) {
+            commandsHistory.putIfAbsent(userData.login, new ArrayList<>());
+            commandsHistory.get(userData.login).add("[" + LocalDateTime.now().format(formatter) + "]" + " - " + commandName);
+        } else
+            commandsHistory.get(userData.login).add("[" + LocalDateTime.now().format(formatter) + "]" + " - " + commandName);
 
     }
 
@@ -83,16 +86,12 @@ public class CommandManager {
      *
      * @return история последних 10 исполненных команд
      */
-    public static String getHistory() {
+    public static String getHistory(UserData userData) {
         StringBuilder history = new StringBuilder();
-        if (!(commandsHistory.isEmpty())) {
-            for (int i = Math.max(0, commandsHistory.size() - HISTORY_SIZE); i < commandsHistory.size(); i++) {
-                if (!(commandsHistory.get(i) == null)) {
-                    history.append("\n").append(commandsHistory.get(i));
-                }
-            }
-        }
-        return (history.toString().isEmpty()) ? "история еще пуста:( " : "последние команд пользователя (<= 10):" + history.toString();
+        commandsHistory.get(userData.login)
+                .subList((commandsHistory.get(userData.login).size() > 12 ? commandsHistory.get(userData.login).size()-12 : 0),commandsHistory.get(userData.login).size()-1)
+                .forEach(c -> history.append(c + ";\n"));
+        return (history.toString().isEmpty()) ? "история еще пуста:( " : history.toString();
     }
 
     /**
@@ -102,13 +101,13 @@ public class CommandManager {
      */
     public static Response isUserExists(UserData userData) {
         try {
-            System.out.println("я проверяю есть ли такой юзер");
-            dbManager.getUserByLogin(userData.login);
-            System.out.println("есть) такой юзер");
+            App.logger.info("Проверка, существует ли юзер " + userData.login);
+            dbManager.getUserIDByLogin(userData.login);
+            System.out.println("Да! Юзер представлен в таблице БД");
             return new Response(UserAuthStatus.OK);
         } catch (SQLException e) {
-            App.logger.severe("пользователя " + userData.login + " не существует.");
-            App.logger.info("перегружаю данные о Users");
+            App.logger.severe("Юзера " + userData.login + " не существует.");
+            App.logger.info("Обновление данных о Users");
             try {
                 dbManager.selectUsers();
             } catch (SQLException ex) {
@@ -128,7 +127,7 @@ public class CommandManager {
 
             Response response;
             if ((commands.get(CommandName).getClass().getSuperclass() != AuthorizationCommand.class)) {
-                UserData userData = null;
+                UserData userData;
                 if (objArg != null) {
                     userData = request.getNewTicketModel().userData;
                 } else {
@@ -138,12 +137,9 @@ public class CommandManager {
                 if (isUserExists.getResponseStatus() != UserAuthStatus.OK)
                     return new Response(UserAuthStatus.NO_SUCH_LOGIN, "пользователя с логином " + request.getUserData().login + " не существует(");
             }
-            commandsHistory.add(CommandName);
+            if (UserCommand.class.isAssignableFrom(commands.get(CommandName).getClass()) && objArg == null)
+                addToHistory(request.getUserData(), CommandName);
 
-            if (ChangingCollectionCommand.class.isAssignableFrom(((Command) commands.get(CommandName)).getClass())) {
-
-                //Server.save();
-            }
             if (commands.get(CommandName).getClass().getSuperclass() == AbstractAddCommand.class
                     && objArg != null) {
                 response = ((AbstractAddCommand) commands.get(CommandName)).execute(request.getNewTicketModel());
@@ -153,6 +149,12 @@ public class CommandManager {
                 } else {
                     response = ((AuthorizationCommand) commands.get(CommandName)).execute(request.getUserData());
                 }
+            }
+
+            if (ChangingCollectionCommand.class.isAssignableFrom(commands.get(CommandName).getClass())
+                    && response.getResponseStatus() != ResponseStatus.ERROR
+                    && response.getResponseStatus() != ResponseStatus.EXIT) {
+                ((ChangingCollectionCommand) commands.get(CommandName)).updateCollection();
             }
 
             return response;

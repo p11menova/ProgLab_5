@@ -1,0 +1,32 @@
+июн. 02, 2024 11:37:19 AM org.server.App main
+INFO: ======STARTED SERVER SESSION======
+июн. 02, 2024 11:37:19 AM org.server.utility.managers.DBInteraction.DBManager connectToDB
+INFO: successfully connected to DB 
+ --DB_HOST: jdbc:postgresql://localhost:5432/studs 
+ --LOGIN: ektrntrpim
+июн. 02, 2024 11:37:19 AM org.server.utility.managers.DBInteraction.DBManager createTables
+INFO: =======PREPARING WORKS WITH DATABASE=======
+июн. 02, 2024 11:37:19 AM org.server.utility.managers.DBInteraction.DBManager createTables
+INFO: successfully created table Users
+июн. 02, 2024 11:37:19 AM org.server.utility.managers.DBInteraction.DBManager createTables
+INFO: successfully created table Tickets
+июн. 02, 2024 11:37:19 AM org.server.utility.managers.DBInteraction.DBManager createTables
+INFO: добавлены юзеры из БД
+июн. 02, 2024 11:37:19 AM org.server.utility.managers.DBInteraction.DBManager createTables
+INFO: добавлены экземпляры Ticket из БД
+июн. 02, 2024 11:37:19 AM org.server.utility.managers.DBInteraction.DBManager createTables
+INFO: =======READY FOR DATABASE INTERACTION=======
+июн. 02, 2024 11:37:19 AM org.server.models.Tickets2 addToCollectionIfOkay
+INFO: в коллекцию были добавлены элементы с id = { 0; 52; 88; 18; 4; 233; 87; 69; 9; 45; 46; 99; 2; 89; 8; 1; 16; 6; 13; }
+июн. 02, 2024 11:37:19 AM org.server.utility.Server openServerSocket
+INFO: прослушивает порт:9008
+июн. 02, 2024 11:37:19 AM org.server.utility.Server openServerSocket
+INFO: ServerSocket opened
+июн. 02, 2024 11:39:42 AM org.server.utility.Server connectToClient
+INFO: ==========SERVER SUCCESSFULLY CONNECTED TO CLIENT ON PORT 9008=======
+июн. 02, 2024 11:39:45 AM org.server.commands.serverCommands.LoginUserCommand execute
+INFO: пользователь: ekat успешно авторизовался
+июн. 02, 2024 11:40:21 AM org.server.utility.managers.CommandManager isUserExists
+INFO: Проверка, существует ли юзер ekat
+июн. 02, 2024 11:40:21 AM org.server.utility.managers.ConnectionHandler run
+INFO: ====CLIENT ON SOCKET 9008 DISCONNECTED=====

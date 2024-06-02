@@ -1,11 +1,13 @@
 package org.server.utility.managers;
 
-import org.example.models.DBModels.TicketWithMetadata;
-import org.example.models.Ticket;
+import org.common.models.DBModels.TicketWithMetadata;
+import org.common.models.Ticket;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.TreeMap;
+
 
 public class CollectionManager {
     // Для синхронизации доступа к коллекции использовать синхронизацию чтения и записи с помощью synchronized
@@ -13,7 +15,7 @@ public class CollectionManager {
     /**
      * Хранимая коллекция
      */
-    private static final Hashtable<Integer, TicketWithMetadata> TicketsCollection = new Hashtable<>();
+    private static final TreeMap<Integer, TicketWithMetadata> TicketsCollection = new TreeMap<>();
     /**
      * Дата инициализации коллекции
      */
@@ -34,15 +36,12 @@ public class CollectionManager {
      *
      * @param ticket элемент добавляемый в коллекцию
      */
-    public  boolean addToCollection(TicketWithMetadata ticket) {
-        System.out.println(ticket.getTicket().get_id() +" "+isIdTaken(ticket.getTicket().get_id()));
+    public synchronized void addToCollection(TicketWithMetadata ticket) {
         if (!isIdTaken(ticket.getTicket().get_id())) {
             TicketsCollection.put(ticket.getTicket().get_id(), ticket);
-            return true;
         }
-        return false;
     }
-    public void updateElem(TicketWithMetadata ticket){
+    public synchronized void updateElem(TicketWithMetadata ticket){
         getTicketsCollection().put(ticket.getTicket().get_id(), ticket);
 
     }
@@ -101,7 +100,8 @@ public class CollectionManager {
      *
      * @param id id элемент с которым должен быть удален
      */
-    public void removeWithId(int id) {
+    public synchronized void removeWithId(int id) {
+        System.out.println("remove with id" + id);
         TicketsCollection.remove(id);
     }
 
@@ -117,18 +117,38 @@ public class CollectionManager {
      *
      * @return хранимая коллекция TicketsCollection
      */
-    public synchronized Hashtable<Integer, TicketWithMetadata> getTicketsCollection() {
+    public synchronized TreeMap<Integer, TicketWithMetadata> getTicketsCollection() {
+        for(Map.Entry<Integer,TicketWithMetadata> entry : TicketsCollection.entrySet()) {
+            if (entry.getValue() == null){
+                TicketsCollection.remove(entry.getKey());
+            }
+        }
         return TicketsCollection;
     }
+    public synchronized void setNull(int id){
+        getTicketsCollection().put(id, null);
 
+    }
     @Override
     public String toString() {
         if (getCollectionLength() == 0) return "коллекция еще пуста(";
         StringBuilder info = new StringBuilder();
-        info.append("TicketsCollection: [ \n");
-        Hashtable<Integer, TicketWithMetadata> ht = getTicketsCollection();
-        ht.forEach((key, value) -> info.append(key).append(" -> ").append(ht.get(key).toString()).append("\n\n"));
+        info.append(String.format("%12s | %6s | %10s | %14s | %20s | %6s | %14s | %8s | %20s | %6s",
+                "author",
+                "id",
+                "name",
+                "coords",
+                "creation_date",
+                "price",
+                "is_refundable",
+                "type",
+                "person_birthday",
+                "person_height"));
+        info.append("\n");
+        info.append("----------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        TreeMap<Integer, TicketWithMetadata> ht = getTicketsCollection();
+        ht.forEach((key, value) -> info.append(ht.get(key).toString()));
         ;
-        return info.toString().trim() + "\n]";
+        return info.toString();
     }
 }

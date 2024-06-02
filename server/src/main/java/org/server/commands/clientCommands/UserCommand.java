@@ -1,10 +1,8 @@
 package org.server.commands.clientCommands;
 
-import org.example.interaction.Request;
-import org.example.interaction.Response;
+import org.common.interaction.Request;
+import org.common.interaction.Response;
 import org.server.commands.Command;
-
-import javax.activation.CommandObject;
 
 /**
  * Абстрактный класс команды. Служит родителем для всех пользовательских команд.

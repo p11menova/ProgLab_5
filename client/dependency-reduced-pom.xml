@@ -23,7 +23,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>org.example.Main</mainClass>
+                  <mainClass>org.client.Main</mainClass>
                 </transformer>
               </transformers>
             </configuration>

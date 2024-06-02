@@ -1,6 +1,6 @@
 package org.server.exceptions.wrongRangeExceptions;
 
-import org.example.models.Coordinates;
+import org.common.models.Coordinates;
 
 /**
  * Исключение неверного диапазона у-координаты. Выбрасывается при попытке задать у-координате значение, больше максимально допустимого.

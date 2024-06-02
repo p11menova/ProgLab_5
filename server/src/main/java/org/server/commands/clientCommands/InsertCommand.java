@@ -1,12 +1,12 @@
 package org.server.commands.clientCommands;
 
-import org.example.interaction.Request;
-import org.example.models.DBModels.TicketWithMetadata;
-import org.example.models.Ticket;
+import org.common.interaction.Request;
+import org.common.models.DBModels.TicketWithMetadata;
+import org.common.models.Ticket;
 import org.server.exceptions.CollectionIdIsTakenException;
 import org.server.exceptions.WrongAmountOfArgumentsException;
-import org.example.interaction.Response;
-import org.example.interaction.ResponseStatus;
+import org.common.interaction.Response;
+import org.common.interaction.ResponseStatus;
 import org.server.utility.managers.CollectionManager;
 import org.server.utility.managers.DBInteraction.DBManager;
 
