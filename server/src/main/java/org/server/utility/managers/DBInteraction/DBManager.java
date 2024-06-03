@@ -134,7 +134,7 @@ public class DBManager {
             LocalDateTime creation_date = LocalDateTime.parse(rs.getString("creation_date"), formatter);
             ZonedDateTime zdt = creation_date.atZone(ZoneId.of( "UTC"));
             ticket.set_creationData(zdt);
-            ticket.set_refundable(Boolean.parseBoolean(rs.getString("is_refundable")));
+            ticket.set_refundable(rs.getString("is_refundable").startsWith("t"));
             ticket.set_type(TicketType.valueOf(rs.getString("type")));
             Person p = new Person();
             p.setHeight(Double.parseDouble(rs.getString("person_height")));

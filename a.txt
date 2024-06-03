@@ -1,7 +1,7 @@
 show
 show
 help
-insert 13
+insert 112
 itmo
 1
 1
@@ -11,7 +11,7 @@ vip
 12
 2000 09 09
 inset
-insert 0
+insert 901
 rasetle
 14
 13
@@ -20,7 +20,7 @@ false
 cheap
 12
 2000 09 09
-insert 52
+insert 5221
 meow
 14
 13
@@ -29,7 +29,7 @@ false
 CHEAP
 12
 2000 09 10
-insert 88
+insert 8825
 mAark
 144
 134
@@ -38,7 +38,7 @@ true
 VIP
 12
 2000 09 10
-insert 18
+insert 1823
 alice
 144
 134
